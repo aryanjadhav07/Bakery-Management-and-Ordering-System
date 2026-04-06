@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block title %}Our Cakes | Bakery Delight{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row align-items-center mb-5">
+        <div class="col-md-8">
+            <h1 class="mb-0" style="color: var(--bakery-primary);">Our Delicious Cakes</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'cart' %}" class="btn btn-outline-primary btn-lg shadow-sm rounded-pill fw-bold">
+                <i class="bi bi-cart"></i> View Cart / Checkout
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4">
+                <!-- Dynamic Image -->
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top rounded-top-4" alt="{{ product.name }}"
+                    style="height: 200px; object-fit: cover;">
+                {% else %}
+                <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    class="card-img-top rounded-top-4" alt="{{ product.name }}"
+                    style="height: 200px; object-fit: cover;">
+                {% endif %}
+
+                <div class="card-body d-flex flex-column text-center">
+                    <h5 class="card-title fw-bold" style="color: var(--bakery-primary);">{{ product.name }}</h5>
+                    <p class="card-text text-muted small mb-3 flex-grow-1">{{ product.description }}</p>
+                    <div class="mb-2">
+                        <select name="size" class="form-select size-select" data-product-id="{{ product.id }}">
+                            {% if product.price_half_kg %}
+                            <option value="half" data-price="{{ product.price_half_kg }}" {% if not product.price_1kg and not product.price %}selected{% endif %}>0.5 KG</option>
+                            {% endif %}
+                            
+                            {% if product.price_1kg %}
+                            <option value="1kg" data-price="{{ product.price_1kg }}" selected>1 KG</option>
+                            {% elif product.price %}
+                            <option value="1kg" data-price="{{ product.price }}" selected>1 KG (Default)</option>
+                            {% endif %}
+                            
+                            {% if product.price_2kg %}
+                            <option value="2kg" data-price="{{ product.price_2kg }}">2 KG</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <h4 class="fw-bold mb-2">₹<span id="price-{{ product.id }}">{% if product.price_1kg %}{{ product.price_1kg }}{% elif product.price %}{{ product.price }}{% else %}{{ product.price_half_kg }}{% endif %}</span></h4>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Qty</span>
+                        <input type="number" name="quantity" class="form-control text-center" value="1" min="1"
+                            max="10">
+                    </div>
+                    <form action="{% url 'add_to_cart' product.id %}" method="POST" class="m-0">
+                        {% csrf_token %}
+                        <input type="hidden" name="size" class="size-input" data-product-id="{{ product.id }}" value="1kg">
+                        <input type="hidden" name="quantity" data-product-id="{{ product.id }}" value="1">
+                        <button type="submit" class="btn btn-primary w-100"
+                            style="background-color: var(--bakery-accent); border: none;">Add to Cart</button>
+                    </form>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <h3 class="text-muted">No cakes available. Please check back later.</h3>
+    </div>
+    {% endfor %}
+</div>
+</div>
+
+<script>
+document.querySelectorAll('.size-select').forEach(select => {
+    select.addEventListener('change', function() {
+        const productId = this.getAttribute('data-product-id');
+        const selectedOption = this.options[this.selectedIndex];
+        const newPrice = selectedOption.getAttribute('data-price');
+        const newSize = selectedOption.value;
+        
+        // Update displayed price
+        document.getElementById(`price-${productId}`).innerText = newPrice;
+        
+        // Update hidden size input in the form
+        const sizeInput = document.querySelector(`input.size-input[data-product-id="${productId}"]`);
+        if (sizeInput) {
+            sizeInput.value = newSize;
+        }
+    });
+});
+
+// Also update quantity when quantity input changes
+document.querySelectorAll('input[name="quantity"]').forEach(input => {
+    input.addEventListener('change', function() {
+        const form = this.closest('form');
+        const quantityInput = form.querySelector('input[name="quantity"][type="hidden"]');
+        if (quantityInput) {
+            quantityInput.value = this.value;
+        }
+    });
+});
+</script>
+{% endblock %}

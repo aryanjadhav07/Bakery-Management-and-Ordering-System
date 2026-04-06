@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile | Bakery Delight{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4" style="color: var(--bakery-primary);">Your Profile</h2>
+                
+                <div class="mb-3">
+                    <label class="text-muted small fw-bold">Username</label>
+                    <p class="fs-5">{{ user.username }}</p>
+                </div>
+                
+                <hr>
+                
+                <div class="mb-3">
+                    <label class="text-muted small fw-bold">Email</label>
+                    <p class="fs-5">{{ user.email }}</p>
+                </div>
+                
+                <hr>
+                
+                <div class="mb-3">
+                    <label class="text-muted small fw-bold">Date Joined</label>
+                    <p class="fs-5">{{ user.date_joined|date:"F d, Y" }}</p>
+                </div>
+                
+                <div class="mt-5 text-center">
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

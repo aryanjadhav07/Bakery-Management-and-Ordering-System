@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Baker Dashboard | Bakery Delight{% endblock %}
+
+{% block content %}
+<div class="mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1 class="mb-4" style="color: var(--bakery-primary);">Welcome back, {{ user.username }}!</h1>
+            <p class="lead text-muted">Manage your bakery operations cleanly and efficiently.</p>
+        </div>
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="row mt-4 mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 rounded-4 text-center h-100 bg-primary bg-opacity-10">
+                <div class="card-body py-4">
+                    <h5 class="text-primary fw-bold">Total Orders</h5>
+                    <h2 class="display-4 fw-bold mb-0 text-primary">{{ total_orders }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 rounded-4 text-center h-100 bg-warning bg-opacity-10">
+                <div class="card-body py-4">
+                    <h5 class="text-warning fw-bold">Pending Orders</h5>
+                    <h2 class="display-4 fw-bold mb-0 text-warning">{{ pending_orders }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0 rounded-4 text-center h-100 bg-success bg-opacity-10">
+                <div class="card-body py-4">
+                    <h5 class="text-success fw-bold">Active Courses</h5>
+                    <h2 class="display-4 fw-bold mb-0 text-success">{{ total_courses }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Baker Operations Nav -->
+    <h3 class="fw-bold mb-4" style="color: var(--bakery-primary);">Operations Toolkit</h3>
+    <div class="row mb-5 justify-content-center gy-4">
+        <!-- Manage Orders -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border border-light h-100 rounded-4 transition-hover">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <i class="bi bi-receipt display-4 mb-3 text-primary"></i>
+                    <h5 class="card-title fw-bold" style="color: var(--bakery-accent);">Manage Orders</h5>
+                    <p class="card-text text-muted small flex-grow-1">Review, accept, and complete customer cake orders securely in real-time.</p>
+                    <a href="{% url 'manage_orders' %}" class="btn btn-outline-primary mt-auto rounded-pill px-4">Open Orders</a>
+                </div>
+            </div>
+        </div>
+        <!-- Manage Courses -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border border-light h-100 rounded-4 transition-hover">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <i class="bi bi-laptop display-4 mb-3" style="color: #6f42c1;"></i>
+                    <h5 class="card-title fw-bold" style="color: var(--bakery-accent);">Manage Courses</h5>
+                    <p class="card-text text-muted small flex-grow-1">Create new masterclasses and manage existing baking courses instantly.</p>
+                    <a href="{% url 'manage_courses' %}" class="btn btn-outline-primary mt-auto rounded-pill px-4">Open Courses</a>
+                </div>
+            </div>
+        </div>
+        <!-- Chat Interactions -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border border-light h-100 rounded-4 transition-hover">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <i class="bi bi-chat-dots display-4 mb-3 text-success"></i>
+                    <h5 class="card-title fw-bold" style="color: var(--bakery-accent);">
+                        Chat Threads
+                        {% if unread_messages_count > 0 %}
+                        <span class="badge bg-danger rounded-pill ms-1">{{ unread_messages_count }}</span>
+                        {% endif %}
+                    </h5>
+                    <p class="card-text text-muted small flex-grow-1">Engage with your customers and answer questions regarding cakes or schedules.</p>
+                    <a href="{% url 'baker_chat_list' %}" class="btn btn-outline-primary mt-auto rounded-pill px-4">Open Chat</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Messages -->
+    {% if recent_messages %}
+    <h3 class="fw-bold mb-4 mt-5" style="color: var(--bakery-primary);">Recent Messages</h3>
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="list-group shadow-sm rounded-4">
+                {% for msg in recent_messages %}
+                <a href="{% url 'baker_conversation' msg.sender.id %}" class="list-group-item list-group-item-action py-3 px-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1 fw-bold">{{ msg.sender.username }}</h6>
+                        <small class="text-muted text-truncate d-inline-block" style="max-width: 300px;">{{ msg.message }}</small>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted d-block">{{ msg.timestamp|timesince }} ago</small>
+                        {% if not msg.is_read and msg.receiver == user %}
+                        <span class="badge bg-danger rounded-pill">New</span>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.transition-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.transition-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+</style>
+{% endblock %}

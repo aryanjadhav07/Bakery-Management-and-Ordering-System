@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Order{% endblock %}
+
+{% block content %}
+    <h1>Place an Order</h1>
+    <form>
+        <label for="product">Product:</label>
+        <input type="text" id="product" name="product">
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity">
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

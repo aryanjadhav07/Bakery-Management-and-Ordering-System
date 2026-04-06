@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Class Schedule{% endblock %}
+
+{% block content %}
+    <h1>Your Class Schedule</h1>
+    {% for schedule in schedules %}
+        <div class="card">
+            <h3>{{ schedule.course.title }}</h3>
+            <p>Start: {{ schedule.start_time }}</p>
+            <p>End: {{ schedule.end_time }}</p>
+        </div>
+    {% endfor %}
+{% endblock %}

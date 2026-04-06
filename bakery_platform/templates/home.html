@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | Bakery Delight{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Freshly Baked, Daily Delight</h1>
+    <p>Discover our range of handcrafted pastries, breads, and cakes made with the finest ingredients.</p>
+    <div>
+        <a href="{% url 'login' %}" class="btn" style="background-color: var(--bakery-accent); color: white; border: none; padding: 10px 20px; font-weight: bold; text-decoration: none; border-radius: 5px;">Login</a>
+        <a href="{% url 'signup' %}" class="btn" style="background-color: transparent; color: white; border: 2px solid white; margin-left: 10px; padding: 10px 20px; font-weight: bold; text-decoration: none; border-radius: 5px;">Signup</a>
+    </div>
+</section>
+
+<section style="text-align: center; margin-top: 50px;">
+    <h2 style="color: var(--secondary-color);">Why Choose Us?</h2>
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-content">
+                <h3 style="font-size: 1.5rem;">Organic Ingredients</h3>
+                <p>We use only the best organic flour and farm-fresh eggs in every batch.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <h3 style="font-size: 1.5rem;">Expert Bakers</h3>
+                <p>Our team has over 20 years of experience in traditional French and artisan baking.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <h3 style="font-size: 1.5rem;">Fresh Daily</h3>
+                <p>Everything is baked fresh every morning, ensuring the perfect crunch and flavor.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section style="margin-top: 80px; background-color: #fff; padding: 40px; border-radius: 15px; box-shadow: var(--shadow);">
+    <div style="display: flex; align-items: center; gap: 40px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+            <h2 style="color: var(--secondary-color);">Learn from the Masters</h2>
+            <p>Join our weekend baking classes and learn the secrets of making the perfect croissant, sourdough, and more. Perfect for beginners and hobbyists!</p>
+        </div>
+        <div style="flex: 1; min-width: 300px;">
+            <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Baking Class" style="width: 100%; border-radius: 10px;">
+        </div>
+    </div>
+</section>
+{% endblock %}

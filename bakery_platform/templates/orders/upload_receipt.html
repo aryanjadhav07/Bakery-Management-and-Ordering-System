@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Receipt | Bakery Delight{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-5 text-center">
+                <i class="bi bi-cloud-arrow-up text-primary" style="font-size: 3rem;"></i>
+                <h2 class="mt-3 mb-4" style="color: var(--bakery-primary);">Upload Payment Receipt</h2>
+                
+                <p class="text-muted mb-4">Please upload a screenshot of your successful transaction to finalize Order #{{ order.id }}.</p>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-4 text-start">
+                        <label for="receipt_image" class="form-label fw-bold">Select Image file (PNG/JPG)</label>
+                        <input class="form-control form-control-lg" type="file" id="receipt_image" name="receipt_image" required accept="image/*">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold" style="background-color: var(--bakery-accent); border: none;">
+                        Complete Upload
+                    </button>
+                    
+                    <a href="{% url 'my_orders' %}" class="btn btn-link text-muted mt-3">I'll do it later</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

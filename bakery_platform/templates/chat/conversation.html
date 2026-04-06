@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% block title %}Chat with {{ customer.username }} | Bakery Delight{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white py-3 border-bottom-0 d-flex justify-content-between align-items-center rounded-top-4">
+                    <div class="d-flex align-items-center">
+                        <a href="{% url 'baker_chat_list' %}" class="btn btn-sm btn-light rounded-circle me-3">
+                            &larr;
+                        </a>
+                        <h5 class="mb-0 fw-bold" style="color: var(--bakery-primary);">
+                            {{ customer.username }}
+                        </h5>
+                    </div>
+                    <small class="text-muted">Chat Thread</small>
+                </div>
+                <div class="card-body p-4 bg-light" style="height: 400px; overflow-y: auto;" id="chat-box">
+                    {% for msg in chat_messages %}
+                        {% if msg.sender == request.user %}
+                            <!-- Baker Message -->
+                            <div class="d-flex flex-row justify-content-end mb-3">
+                                <div class="p-3 ms-3 rounded-4 bg-primary text-white shadow-sm" style="max-width: 75%;">
+                                    <p class="small mb-0">{{ msg.message }}</p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <!-- Customer Message -->
+                            <div class="d-flex flex-row justify-content-start mb-3">
+                                <div class="p-3 me-3 rounded-4 bg-white shadow-sm border" style="max-width: 75%;">
+                                    <p class="small mb-0 text-muted">{{ msg.message }}</p>
+                                </div>
+                                <small class="align-self-end text-muted fst-italic ms-1" style="font-size: 0.7rem;">{{ msg.timestamp|time:"H:i" }}</small>
+                            </div>
+                        {% endif %}
+                    {% empty %}
+                        <div class="text-center text-muted my-5">
+                            <p>No messages yet.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="card-footer bg-white py-3 border-top-0 rounded-bottom-4">
+                    <form method="post" action="" id="chat-form">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            {{ form.message }}
+                            <button class="btn btn-primary rounded-end px-4" type="submit">Reply</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const chatBox = document.getElementById("chat-box");
+    const chatForm = document.getElementById("chat-form");
+    const messageInput = document.getElementsByName("message")[0];
+    
+    {% if customer %}
+    const currentUserId = {{ request.user.id }};
+    const otherUserId = {{ customer.id }};
+    const fetchUrl = "{% url 'api_fetch_messages' customer.id %}";
+    const sendUrl = "{% url 'api_send_message' %}";
+    
+    // Auto-scroll on load
+    if(chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function renderMessage(msg) {
+        if (msg.sender_id === currentUserId) {
+            return `
+            <div class="d-flex flex-row justify-content-end mb-3">
+                <div class="p-3 ms-3 rounded-4 bg-primary text-white shadow-sm" style="max-width: 75%;">
+                    <p class="small mb-0">${msg.message}</p>
+                </div>
+            </div>`;
+        } else {
+            return `
+            <div class="d-flex flex-row justify-content-start mb-3">
+                <div class="p-3 me-3 rounded-4 bg-white shadow-sm border" style="max-width: 75%;">
+                    <p class="small mb-0 text-muted">${msg.message}</p>
+                </div>
+                <small class="align-self-end text-muted fst-italic ms-1" style="font-size: 0.7rem;">${msg.timestamp}</small>
+            </div>`;
+        }
+    }
+
+    function fetchMessages() {
+        if (!fetchUrl || fetchUrl === '#') return;
+        fetch(fetchUrl)
+            .then(res => res.json())
+            .then(data => {
+                const msgs = data.messages;
+                if (!msgs || msgs.length === 0) {
+                    if (chatBox.innerHTML.trim() === '') {
+                        chatBox.innerHTML = '<div class="text-center text-muted my-5"><p>No messages yet.</p></div>';
+                    }
+                    return;
+                }
+                
+                const isNearBottom = chatBox.scrollTop + chatBox.clientHeight >= chatBox.scrollHeight - 50;
+                
+                let html = '';
+                msgs.forEach(msg => {
+                    html += renderMessage(msg);
+                });
+                chatBox.innerHTML = html;
+                
+                if (isNearBottom) {
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            })
+            .catch(err => console.error("Error fetching messages:", err));
+    }
+
+    setInterval(fetchMessages, 2000);
+    fetchMessages(); // initial load
+
+    if (chatForm) {
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const text = messageInput.value.trim();
+            if (!text || !otherUserId) return;
+
+            fetch(sendUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    receiver_id: otherUserId,
+                    message: text
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    messageInput.value = '';
+                    fetchMessages(); 
+                    setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 100);
+                }
+            });
+        });
+    }
+    {% endif %}
+</script>
+
+<style>
+    textarea[name="message"] {
+        border-radius: 0.5rem 0 0 0.5rem;
+        height: 45px;
+        resize: none;
+    }
+</style>
+{% endblock %}

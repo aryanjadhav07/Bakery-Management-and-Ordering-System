@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Assistant{% endblock %}
+
+{% block content %}
+    <h1>AI Assistant</h1>
+    <div id="chat-history"></div>
+    <form id="chat-form">
+        {% csrf_token %}
+        <input type="text" id="question" name="question">
+        <button type="submit">Ask</button>
+    </form>
+
+    <script>
+        const chatHistory = document.getElementById('chat-history');
+        const chatForm = document.getElementById('chat-form');
+        const questionInput = document.getElementById('question');
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const question = questionInput.value;
+            chatHistory.innerHTML += `<p><strong>You:</strong> ${question}</p>`;
+            questionInput.value = '';
+            const response = await fetch('{% url "chatbot" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `question=${question}`
+            });
+            const data = await response.json();
+            chatHistory.innerHTML += `<p><strong>AI:</strong> ${data.answer}</p>`;
+        });
+    </script>
+{% endblock %}

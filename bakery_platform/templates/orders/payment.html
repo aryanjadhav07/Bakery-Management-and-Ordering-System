@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Complete Payment | Bakery Delight{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow border-0 rounded-4 text-center">
+            <div class="card-body p-5">
+                <h2 class="mb-4" style="color: var(--bakery-primary);">Complete Your Order</h2>
+                
+                <div class="mb-4 text-start bg-light p-3 rounded-3">
+                    <p class="mb-1 text-muted small fw-bold">Order Summary (Order #{{ order.id }})</p>
+                    <ul class="list-unstyled mb-2">
+                        {% for item in order.orderitem_set.all %}
+                        <li class="fw-bold mb-1">
+                            {{ item.quantity }}x {{ item.product.name }} 
+                            ({% if item.size == 'half' %}0.5 KG{% elif item.size == '1kg' %}1 KG{% elif item.size == '2kg' %}2 KG{% else %}{{ item.size|default:"N/A" }}{% endif %})
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <hr class="my-2">
+                    <p class="mb-0 fs-5 text-success fw-bold">Total to Pay: ₹{{ order.total_price }}</p>
+                </div>
+                
+                <hr>
+                
+                <h5 class="mt-4 mb-3">Scan QR to complete payment</h5>
+                
+                <!-- Placeholder QR Code Image -->
+                <div class="mb-4">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PaymentToBakeryDelightRS{{ order.total_price }}" alt="QR Code" class="img-fluid border rounded p-2 bg-white" style="width: 200px;">
+                </div>
+                
+                <p class="text-muted small mb-4">Please make the payment using any UPI app and confirm below.</p>
+                
+                <form method="POST" class="submit-with-loading">
+                    {% csrf_token %}
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success p-3 fs-5 rounded-3 fw-bold btn-loading">I have completed payment</button>
+                    </div>
+                </form>
+                
+                <div class="mt-4">
+                    <a href="{% url 'my_orders' %}" class="text-muted text-decoration-none">Cancel and return to My Orders</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

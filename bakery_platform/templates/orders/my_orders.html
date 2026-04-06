@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}My Orders | Bakery Delight{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="color: var(--bakery-primary);">My Orders</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            {% if orders %}
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Order ID</th>
+                                    <th>Cakes</th>
+                                    <th>Total Price</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th class="pe-4">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td class="ps-4 fw-bold">#{{ order.id }}</td>
+                                    <td>
+                                        <ul class="list-unstyled mb-0">
+                                            {% for item in order.orderitem_set.all %}
+                                            <li class="small">
+                                                {{ item.quantity }}x {{ item.product.name }}
+                                                ({% if item.size == 'half' %}0.5 KG{% elif item.size == '1kg' %}1 KG{% elif item.size == '2kg' %}2 KG{% else %}{{ item.size|default:"N/A" }}{% endif %})
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td class="fw-bold fs-6">₹{{ order.total_price }}</td>
+                                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        {% if order.status == 'Completed' %}
+                                        <span class="badge bg-success rounded-pill px-3">{{ order.status }}</span>
+                                        {% elif order.status == 'Baking' %}
+                                        <span class="badge bg-warning text-dark rounded-pill px-3">{{ order.status }}</span>
+                                        {% elif order.status == 'Accepted' %}
+                                        <span class="badge bg-primary rounded-pill px-3">{{ order.status }}</span>
+                                        {% elif order.status == 'Paid' %}
+                                        <span class="badge bg-info text-dark rounded-pill px-3">{{ order.status }}</span>
+                                        {% elif order.status == 'Cancelled' %}
+                                        <span class="badge bg-danger rounded-pill px-3">{{ order.status }}</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary rounded-pill px-3">{{ order.status }}</span>
+                                        {% endif %}
+
+                                        {% if order.status == 'Cancelled' %}
+                                        <br>
+                                        <small class="text-danger mt-1 d-block">This order has been cancelled by the baker.</small>
+                                        {% endif %}
+                                        
+                                        <div class="mt-1 small text-muted">
+                                            Receipt Uploaded: {% if order.receipt_image %}<strong>Yes</strong>{% else %}<strong>No</strong>{% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="pe-4">
+                                        {% if order.status == 'Pending' %}
+                                        <a href="{% url 'payment' order.id %}" class="btn btn-sm btn-outline-primary">Complete Payment</a>
+                                        {% elif order.status == 'Paid' %}
+                                        <span class="text-muted small">Awaiting Baker</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <h3 class="text-muted">You haven't ordered any cakes yet!</h3>
+                <a href="{% url 'products' %}" class="btn btn-primary mt-3" style="background-color: var(--bakery-accent); border: none;">Browse Cakes</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

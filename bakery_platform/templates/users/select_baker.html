@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Select a Baker | Bakery Delight{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white py-4 border-bottom-0 rounded-top-4 text-center">
+                <div class="display-3 mb-3 text-primary">👨‍🍳</div>
+                <h3 class="mb-0 fw-bold" style="color: var(--bakery-primary);">Select Your Baker</h3>
+            </div>
+            <div class="card-body p-4 p-md-5 bg-light rounded-bottom-4">
+                <p class="text-center text-muted mb-4">Before proceeding, please choose a baker to interact with.</p>
+                
+                <form method="post" action="{% url 'select_baker' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next_url }}">
+                    
+                    <div class="row g-3">
+                        {% for baker in bakers %}
+                        <div class="col-12">
+                            <label class="card bg-white border outline-primary h-100 rounded-3 cursor-pointer" style="cursor: pointer;">
+                                <div class="card-body d-flex align-items-center p-3">
+                                    <div class="form-check fs-5 mb-0 d-flex align-items-center w-100">
+                                        <input class="form-check-input mt-0 me-3" type="radio" name="baker_id" value="{{ baker.id }}" required {% if forloop.first %}checked{% endif %}>
+                                        <div class="d-flex flex-column">
+                                            <span class="fw-bold">{{ baker.username }}</span>
+                                            <small class="text-muted d-block" style="font-size: 0.8rem;">Professional Baker</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        {% empty %}
+                        <div class="col-12 text-center text-danger">
+                            <p>No bakers are currently registered in the system!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mt-5 d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm" {% if not bakers %}disabled{% endif %}>Confirm & Continue</button>
+                        {% if next_url != 'dashboard' %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary rounded-pill">Cancel</a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
