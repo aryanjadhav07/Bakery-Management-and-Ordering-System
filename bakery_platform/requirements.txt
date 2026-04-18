@@ -1,0 +1,19 @@
+# Core Django
+Django==5.1.1
+asgiref==3.8.1
+sqlparse==0.5.1
+
+# PostgreSQL driver
+psycopg2-binary==2.9.10
+
+# Database URL parsing (Render / Heroku style)
+dj-database-url==2.3.0
+
+# Static files serving in production
+whitenoise==6.8.2
+
+# WSGI server for production (Render)
+gunicorn==23.0.0
+
+# Image handling
+Pillow==12.2.0

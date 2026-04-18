@@ -1,0 +1,257 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$870000$1EVhAxg6gqNor10dzKTCiJ$Ld8Q0mNyPdR0AlCFBfyjU2/5Y5yRxZpPQIhQnnTHA/0=",
+    "last_login": "2026-04-18T13:41:07.423Z",
+    "is_superuser": true,
+    "username": "dell",
+    "first_name": "",
+    "last_name": "",
+    "email": "angaraj070@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-04-06T17:08:37.595Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "1rinaddb9kkh3ik9udxva1txvf39y0i0",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAUBf-FtSG0QLm4dO83kPugUjU0Ke3K-O_apAvdnpk5L5VwW0vaWl7SJOqsrDr9boT8yHUHcsd6mzXPdV0m0ruiD9r0dZb8vBzu30HBVr51wOCCAW-5l9E654k4k-GeTR5pAPRkrTHgpIMhSu4EIWIEgQjeA6v3B-YZN-M:1w8Y7a:B9dyrc1mlhuCTQyOtI9IvMHqxsD7VkA51G_olS499S8",
+    "expire_date": "2026-04-17T06:35:10.363Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "8ux2bdvcr4xhwtg9zdyvag6wju837v86",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQRP-FsyEUpQsevfcbyC67SNXQpLQn47_bJj3oHOe9mbeKuC4lrk3mOLK6KqtOvx1hekrdAT-w3iedprrMI-ld0QdtephYXrfD_Tso2Mq2FvYElsA7z0Ey2WQBe8iCZ7aGXAg-G4HsOgJMWzruU8BMBBcgMurzBRBbOWA:1wE5qz:TkTnIJnsKThoqlPIi8KPY5dWxscapib4bZY0I8sysv8",
+    "expire_date": "2026-05-02T13:36:57.849Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "9rrnyttd3t7i77i1ree3ezuws086920a",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQAP_C2ZAtpVA8eu8byMIuUjWQlPZk_Lsh6UGvM5N5C4_Hnv3RePMriatQ4vLLAsYnly7ogeVeZaxl39YgeyJP2-RSiV-3s_0bZGy5b2MAdDNpNBxnx8lYDkjGogMd4hRGp6IGldiRTawR0LIagaZBuYFAfL4NNDiM:1wA0el:8S-p9Zf79-qI-EtcVnxw_i0HQF1EXx6N_eyIQxH2U7A",
+    "expire_date": "2026-04-21T07:15:27.314Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ji05jeylgkkzczwewb0srli3z6fwn39b",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQAP_C2ZAtpVA8eu8byMIuUjWQlPZk_Lsh6UGvM5N5C4_Hnv3RePMriatQ4vLLAsYnly7ogeVeZaxl39YgeyJP2-RSiV-3s_0bZGy5b2MAdDNpNBxnx8lYDkjGogMd4hRGp6IGldiRTawR0LIagaZBuYFAfL4NNDiM:1wA0ej:JPjv2O8-RoVhoYWQ1CpfuBTe0HbC_gnC6MwO5baCXaE",
+    "expire_date": "2026-04-21T07:15:25.119Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "qwxdxfnl510taf7bo9j13r0owvn5pt5c",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQAP_C2ZAtpVA8eu8byMIuUjWQlPZk_Lsh6UGvM5N5C4_Hnv3RePMriatQ4vLLAsYnly7ogeVeZaxl39YgeyJP2-RSiV-3s_0bZGy5b2MAdDNpNBxnx8lYDkjGogMd4hRGp6IGldiRTawR0LIagaZBuYFAfL4NNDiM:1wA0el:8S-p9Zf79-qI-EtcVnxw_i0HQF1EXx6N_eyIQxH2U7A",
+    "expire_date": "2026-04-21T07:15:27.123Z"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-04-07T08:05:57.850Z",
+    "user": [
+      "dell"
+    ],
+    "content_type": [
+      "orders",
+      "order"
+    ],
+    "object_id": "13",
+    "object_repr": "Order 13 by OM",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-04-07T08:06:03.884Z",
+    "user": [
+      "dell"
+    ],
+    "content_type": [
+      "orders",
+      "order"
+    ],
+    "object_id": "12",
+    "object_repr": "Order 12 by OM",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-04-07T08:19:54.886Z",
+    "user": [
+      "dell"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "1",
+    "object_repr": "KAVITA",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"User permissions\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-04-07T08:25:35.459Z",
+    "user": [
+      "dell"
+    ],
+    "content_type": [
+      "courses",
+      "course"
+    ],
+    "object_id": "1",
+    "object_repr": "Chocolate Beginners",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Image\", \"Created by\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2026-04-18T13:42:05.047Z",
+    "user": [
+      "dell"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "3",
+    "object_repr": "AKSHADA",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2026-04-18T13:42:05.047Z",
+    "user": [
+      "dell"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "1",
+    "object_repr": "KAVITA",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2026-04-18T13:42:05.047Z",
+    "user": [
+      "dell"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "2",
+    "object_repr": "OM",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2026-04-18T13:42:45.022Z",
+    "user": [
+      "dell"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "24",
+    "object_repr": "Biscoff Cheese Cake",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2026-04-18T13:42:45.022Z",
+    "user": [
+      "dell"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "23",
+    "object_repr": "Chocolate and Hazzlenut",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2026-04-18T13:42:45.022Z",
+    "user": [
+      "dell"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "22",
+    "object_repr": "Chocolate Truffle",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2026-04-18T13:42:45.022Z",
+    "user": [
+      "dell"
+    ],
+    "content_type": [
+      "products",
+      "product"
+    ],
+    "object_id": "21",
+    "object_repr": "Fruit Overload",
+    "action_flag": 3,
+    "change_message": ""
+  }
+}
+]
