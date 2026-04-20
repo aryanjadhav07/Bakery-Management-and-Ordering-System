@@ -5,153 +5,469 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bakery Delight{% endblock %}</title>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom Theme CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
     <style>
+        /* ── CSS Variables ─────────────────────────────────────────── */
         :root {
-            --bakery-primary: #8b5a2b;
+            --bakery-primary:   #8b5a2b;
             --bakery-secondary: #f1c27d;
-            --bakery-accent: #e67e22;
-            --bakery-bg: #fff9f0;
+            --bakery-accent:    #e67e22;
+            --bakery-bg:        #fff9f0;
+            --navbar-height:    64px;
         }
+
         body { background-color: var(--bakery-bg); }
-        .navbar { background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .navbar-brand { font-weight: bold; color: var(--bakery-primary) !important; }
-        .nav-link { color: #333 !important; font-weight: 500; }
-        .nav-link:hover { color: var(--bakery-accent) !important; }
-        .footer { background-color: var(--bakery-primary); color: white; padding: 2rem 0; margin-top: 4rem; }
+
+        /* ── Navbar shell ──────────────────────────────────────────── */
+        .bakery-navbar {
+            background: #ffffff;
+            box-shadow: 0 2px 12px rgba(139, 90, 43, 0.12);
+            min-height: var(--navbar-height);
+            padding: 0;
+        }
+
+        /* Brand / Logo */
+        .bakery-navbar .navbar-brand {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--bakery-primary) !important;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0;
+            white-space: nowrap;
+        }
+        .bakery-navbar .navbar-brand:hover {
+            color: var(--bakery-accent) !important;
+        }
+
+        /* Hamburger */
+        .bakery-navbar .navbar-toggler {
+            border: 1.5px solid var(--bakery-secondary);
+            border-radius: 8px;
+            padding: 5px 9px;
+        }
+        .bakery-navbar .navbar-toggler:focus { box-shadow: none; }
+        .bakery-navbar .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%238b5a2b' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* ── Nav links (center menu) ───────────────────────────────── */
+        .bakery-navbar .nav-link {
+            color: #444 !important;
+            font-weight: 500;
+            font-size: 0.88rem;
+            padding: 6px 10px !important;
+            border-radius: 8px;
+            transition: color 0.2s ease, background 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+        .bakery-navbar .nav-link:hover {
+            color: var(--bakery-accent) !important;
+            background: rgba(230, 126, 34, 0.07);
+        }
+
+        /* Active state — filled pill */
+        .bakery-navbar .nav-link.active-nav {
+            color: #fff !important;
+            background: var(--bakery-primary);
+            font-weight: 600;
+        }
+        .bakery-navbar .nav-link.active-nav:hover {
+            background: var(--bakery-accent);
+            color: #fff !important;
+        }
+
+        /* Change Baker — special pill */
+        .bakery-navbar .nav-link.change-baker-link {
+            color: var(--bakery-primary) !important;
+            background: rgba(241, 194, 125, 0.25);
+            border: 1px solid var(--bakery-secondary);
+            font-weight: 600;
+        }
+        .bakery-navbar .nav-link.change-baker-link:hover {
+            background: var(--bakery-secondary);
+            color: var(--bakery-primary) !important;
+        }
+        .bakery-navbar .nav-link.change-baker-link.active-nav {
+            background: var(--bakery-primary);
+            color: #fff !important;
+            border-color: var(--bakery-primary);
+        }
+
+        /* ── Right-side user section ───────────────────────────────── */
+        .navbar-user-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        /* Profile avatar circle */
+        .profile-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--bakery-primary), var(--bakery-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .profile-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(139, 90, 43, 0.25);
+        }
+        .profile-avatar-active {
+            box-shadow: 0 0 0 3px var(--bakery-accent);
+        }
+
+        /* Welcome text */
+        .welcome-text {
+            font-size: 0.82rem;
+            color: #555;
+            white-space: nowrap;
+            line-height: 1.2;
+        }
+        .welcome-text strong {
+            color: var(--bakery-primary);
+            font-weight: 700;
+            display: block;
+            font-size: 0.88rem;
+        }
+
+        /* Logout button */
+        .btn-logout {
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 5px 14px;
+            border-radius: 20px;
+            border: 1.5px solid #dc3545;
+            color: #dc3545;
+            background: transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-logout:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        /* Login / Signup buttons */
+        .btn-nav-login {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 5px 16px;
+            border-radius: 20px;
+            border: 1.5px solid var(--bakery-primary);
+            color: var(--bakery-primary);
+            background: transparent;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .btn-nav-login:hover {
+            background: var(--bakery-primary);
+            color: #fff;
+        }
+        .btn-nav-signup {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 5px 16px;
+            border-radius: 20px;
+            background: var(--bakery-accent);
+            color: #fff;
+            border: none;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .btn-nav-signup:hover {
+            background: var(--bakery-primary);
+            color: #fff;
+        }
+
+        /* ── Mobile collapse adjustments ──────────────────────────── */
+        @media (max-width: 991.98px) {
+            .bakery-navbar .navbar-collapse {
+                border-top: 1px solid rgba(139, 90, 43, 0.1);
+                padding: 12px 0 8px;
+                margin-top: 8px;
+            }
+            .bakery-navbar .nav-link {
+                padding: 9px 14px !important;
+                border-radius: 8px;
+                margin-bottom: 2px;
+            }
+            .navbar-user-section {
+                flex-wrap: wrap;
+                padding: 10px 0 4px;
+                border-top: 1px solid rgba(139, 90, 43, 0.1);
+                margin-top: 6px;
+                gap: 8px;
+            }
+            .welcome-text { font-size: 0.85rem; }
+        }
+
+        /* ── Footer ────────────────────────────────────────────────── */
+        .footer {
+            background-color: var(--bakery-primary);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+        .footer a { color: rgba(255,255,255,0.75); }
+        .footer a:hover { color: #fff; }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">🥐 Bakery Delight</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-content="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    {% if user.is_authenticated %}
-                        {% if user.is_staff %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'baker_dashboard' %}">Baker Dashboard</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'manage_orders' %}">Manage Orders</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'manage_products' %}">Manage Products</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'manage_courses' %}">Manage Courses</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'baker_chat_list' %}">Chat</a></li>
-                        {% else %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'products' %}">Products</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'courses' %}">Courses</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'my_orders' %}">Orders</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'customer_chat' %}">Chat</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'schedule' %}">Schedule</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Profile</a></li>
-                            <li class="nav-item"><a class="nav-link fw-bold text-primary" href="{% url 'select_baker' %}">👨‍🍳 Change Baker</a></li>
-                        {% endif %}
-                    {% endif %}
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item"><span class="nav-link text-dark">Welcome, {{ user.username }}!</span></li>
-                        <li class="nav-item"><a class="btn btn-outline-danger ms-2" href="{% url 'logout' %}">Logout</a></li>
+
+<!-- ════════════════════════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════════════════════════ -->
+<nav class="navbar navbar-expand-lg sticky-top bakery-navbar">
+    <div class="container">
+
+        <!-- ── Brand / Logo ── -->
+        <a class="navbar-brand" href="{% url 'home' %}">
+            🥐 Bakery Delight
+        </a>
+
+        <!-- ── Mobile toggle ── -->
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarMain"
+                aria-controls="navbarMain" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- ── Collapsible content ── -->
+        <div class="collapse navbar-collapse" id="navbarMain">
+
+            <!-- ── Centre nav links ── -->
+            <ul class="navbar-nav mx-auto align-items-lg-center gap-lg-1">
+                {% if user.is_authenticated %}
+
+                    {% if user.is_staff %}
+                        <!-- Baker menu -->
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'baker_dashboard' %}active-nav{% endif %}"
+                               href="{% url 'baker_dashboard' %}">
+                                <i class="fa-solid fa-gauge-high me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'manage_orders' %}active-nav{% endif %}"
+                               href="{% url 'manage_orders' %}">
+                                <i class="fa-solid fa-box me-1"></i>Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'manage_products' %}active-nav{% endif %}"
+                               href="{% url 'manage_products' %}">
+                                <i class="fa-solid fa-bread-slice me-1"></i>Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'manage_courses' %}active-nav{% endif %}"
+                               href="{% url 'manage_courses' %}">
+                                <i class="fa-solid fa-graduation-cap me-1"></i>Courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'manage_course_payments' %}active-nav{% endif %}"
+                               href="{% url 'manage_course_payments' %}">
+                                <i class="fa-solid fa-receipt me-1"></i>Course Payments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'baker_chat_list' or request.resolver_match.url_name == 'baker_conversation' %}active-nav{% endif %}"
+                               href="{% url 'baker_chat_list' %}">
+                                <i class="fa-solid fa-comments me-1"></i>Chat
+                            </a>
+                        </li>
+
                     {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                        <li class="nav-item"><a class="btn btn-primary ms-2" href="{% url 'signup' %}" style="background-color: var(--bakery-accent); border: none;">Signup</a></li>
+                        <!-- Customer menu -->
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active-nav{% endif %}"
+                               href="{% url 'dashboard' %}">
+                                <i class="fa-solid fa-house me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'products' or request.resolver_match.url_name == 'product_detail' %}active-nav{% endif %}"
+                               href="{% url 'products' %}">
+                                <i class="fa-solid fa-bread-slice me-1"></i>Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'courses' or request.resolver_match.url_name == 'course_detail' or request.resolver_match.url_name == 'enrolled_courses' %}active-nav{% endif %}"
+                               href="{% url 'courses' %}">
+                                <i class="fa-solid fa-graduation-cap me-1"></i>Courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'my_orders' or request.resolver_match.url_name == 'cart' or request.resolver_match.url_name == 'payment' %}active-nav{% endif %}"
+                               href="{% url 'my_orders' %}">
+                                <i class="fa-solid fa-box me-1"></i>Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'customer_chat' %}active-nav{% endif %}"
+                               href="{% url 'customer_chat' %}">
+                                <i class="fa-solid fa-comments me-1"></i>Chat
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'schedule' %}active-nav{% endif %}"
+                               href="{% url 'schedule' %}">
+                                <i class="fa-solid fa-calendar-days me-1"></i>Schedule
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link change-baker-link {% if request.resolver_match.url_name == 'select_baker' %}active-nav{% endif %}"
+                               href="{% url 'select_baker' %}">
+                                <i class="fa-solid fa-arrows-rotate me-1"></i>Change Baker
+                            </a>
+                        </li>
                     {% endif %}
-                </ul>
+
+                {% endif %}
+            </ul>
+
+            <!-- ── Right side: profile + welcome + logout ── -->
+            <div class="navbar-user-section">
+                {% if user.is_authenticated %}
+                    <!-- Profile avatar — links to profile page -->
+                    <a href="{% url 'profile' %}"
+                       class="profile-avatar text-decoration-none {% if request.resolver_match.url_name == 'profile' %}profile-avatar-active{% endif %}"
+                       title="View Profile">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+                    <!-- Welcome text -->
+                    <div class="welcome-text">
+                        <span>Welcome,</span>
+                        <strong>{{ user.username|capfirst }}!</strong>
+                    </div>
+                    <!-- Logout -->
+                    <a href="{% url 'logout' %}" class="btn-logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Logout
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn-nav-login">Login</a>
+                    <a href="{% url 'signup' %}" class="btn-nav-signup">Sign Up</a>
+                {% endif %}
+            </div>
+
+        </div><!-- /collapse -->
+    </div><!-- /container -->
+</nav>
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+<div class="container mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════════ -->
+<footer class="footer mt-auto">
+    <div class="container">
+        <div class="row text-center">
+            <!-- Contact Details -->
+            <div class="col-md-3 mb-3">
+                <p class="mb-1"><strong>Contact Us:</strong></p>
+                <p class="mb-0 small">
+                    <i class="fas fa-phone me-2"></i> +91 93708 96978<br>
+                    <i class="fas fa-envelope me-2"></i> kavitalilake@gmail.com<br>
+                    <i class="fas fa-map-marker-alt me-2"></i> Nashik, India
+                </p>
+            </div>
+
+            <!-- Baker Details -->
+            <div class="col-md-3 mb-3">
+                <p class="mb-1"><strong>Our Baker:</strong></p>
+                <p class="mb-0 small">
+                    <i class="fas fa-user me-2"></i> Kavita Lilake<br>
+                    <i class="fas fa-birthday-cake me-2"></i> All kinds of cakes baked with love. Custom cakes accepted.
+                </p>
+            </div>
+
+            <!-- Social Links -->
+            <div class="col-md-3 mb-3">
+                <p class="mb-1"><strong>Follow Us:</strong></p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="#" class="text-decoration-none"><small>Instagram</small></a>
+                    <a href="#" class="text-decoration-none"><small>Facebook</small></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-md-3 mb-3">
+                <p class="mb-1"><strong>Quick Links:</strong></p>
+                <div class="d-flex justify-content-center gap-4">
+                    <a href="{% url 'home' %}" class="text-decoration-none text-white-50">
+                        <small><i class="fas fa-home me-1"></i>Home</small>
+                    </a>
+                    <a href="{% url 'products' %}" class="text-decoration-none text-white-50">
+                        <small><i class="fas fa-shopping-bag me-1"></i>Products</small>
+                    </a>
+                    <a href="{% url 'courses' %}" class="text-decoration-none text-white-50">
+                        <small><i class="fas fa-graduation-cap me-1"></i>Courses</small>
+                    </a>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <div class="container mt-4">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        {% block content %}{% endblock %}
+        <hr class="border-light opacity-25 my-2">
+        <p class="mb-0 text-center small">&copy; 2026 Bakery Delight. Freshly baked with love.</p>
+        <p class="mb-0 text-center" style="font-size:0.75rem; opacity:0.6;">Artisan Pastries &amp; Baking Courses</p>
     </div>
+</footer>
 
-    <footer class="footer mt-auto">
-        <div class="container">
-            <div class="row text-center">
-                <!-- Contact Details -->
-                <div class="col-md-3 mb-3">
-                    <p class="mb-1"><strong>Contact Us:</strong></p>
-                    <p class="mb-0 small">
-                        <i class="fas fa-phone me-2"></i> +91 93708 96978<br>
-                        <i class="fas fa-envelope me-2"></i> kavitalilake@gmail.com<br>
-                        <i class="fas fa-map-marker-alt me-2"></i> Nashik, India
-                    </p>
-                </div>
-                
-                <!-- Baker Details -->
-                <div class="col-md-3 mb-3">
-                    <p class="mb-1"><strong>Our Baker:</strong></p>
-                    <p class="mb-0 small">
-                        <i class="fas fa-user me-2"></i> Kavita Lilake <br>
-                        <i class="fas fa-birthday-cake me-2"></i> All kinds of cakes baked with love and also accept the custom cakes. 
-                    </p>
-                </div>
-                
-                <!-- Social Links -->
-                <div class="col-md-3 mb-3">
-                    <p class="mb-1"><strong>Follow Us:</strong></p>
-                    <div class="d-flex justify-content-center gap-3">
-                        <a href="#" class="text-decoration-none">
-                            <small>Instagram</small>
-                        </a>
-                        <a href="#" class="text-decoration-none">
-                            <small>Facebook</small>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Quick Links -->
-                <div class="col-md-3 mb-3">
-                    <p class="mb-1"><strong>Quick Links:</strong></p>
-                    <div class="d-flex justify-content-center gap-4">
-                        <a href="{% url 'home' %}" class="text-decoration-none text-white-50">
-                            <small><i class="fas fa-home me-1"></i>Home</small>
-                        </a>
-                        <a href="{% url 'products' %}" class="text-decoration-none text-white-50">
-                            <small><i class="fas fa-shopping-bag me-1"></i>Products</small>
-                        </a>
-                        <a href="{% url 'courses' %}" class="text-decoration-none text-white-50">
-                            <small><i class="fas fa-graduation-cap me-1"></i>Courses</small>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <p class="mb-0 text-center">&copy; 2026 Bakery Delight. Freshly baked with love.</p>
-            <small>Artisan Pastries & Baking Courses</small>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Global loading state for labeled forms
-        document.addEventListener('DOMContentLoaded', () => {
-            const loadingForms = document.querySelectorAll('.submit-with-loading');
-            loadingForms.forEach(form => {
-                form.addEventListener('submit', function() {
-                    const btn = this.querySelector('.btn-loading, [type="submit"]');
-                    if (btn) {
-                        btn.disabled = true;
-                        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
-                    }
-                });
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Global loading state for forms
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.submit-with-loading').forEach(form => {
+            form.addEventListener('submit', function () {
+                const btn = this.querySelector('.btn-loading, [type="submit"]');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+                }
             });
         });
-    </script>
-    {% block scripts %}{% endblock %}
+    });
+</script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

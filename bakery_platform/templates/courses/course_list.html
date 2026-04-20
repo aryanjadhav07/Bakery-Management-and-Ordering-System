@@ -1,13 +1,141 @@
 {% extends 'base.html' %}
+{% load course_tags %}
 
-{% block title %}Courses{% endblock %}
+{% block title %}Courses | Bakery Delight{% endblock %}
 
 {% block content %}
-    <h1>Our Courses</h1>
-    {% for course in courses %}
-        <div class="card">
-            <h3><a href="{% url 'course_detail' course.pk %}">{{ course.title }}</a></h3>
-            <p>{{ course.description }}</p>
+<div class="mt-2 mb-5">
+
+    <!-- Page Header -->
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold mb-1" style="color:var(--bakery-primary);">
+                <i class="fa-solid fa-graduation-cap me-2"></i>Baking Courses
+            </h2>
+            <p class="text-muted mb-0">Learn from our expert baker — enroll in a masterclass today.</p>
         </div>
-    {% endfor %}
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a href="{% url 'enrolled_courses' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="fa-solid fa-list-check me-1"></i> My Enrollments
+            </a>
+        </div>
+    </div>
+
+    {% if courses %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for course in courses %}
+
+        {# Resolve enrollment status for this course #}
+        {% with enrollment=enrollment_map|get_item:course.pk %}
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 course-card">
+
+                <!-- Cover Image -->
+                <div class="course-img-wrapper rounded-top-4 overflow-hidden">
+                    {% if course.image %}
+                        <img src="{{ course.image }}" alt="{{ course.title }}" class="course-img"
+                             onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=600&q=80';">
+                    {% else %}
+                        <div class="course-img-placeholder"><span>🎂</span></div>
+                    {% endif %}
+                    <div class="course-price-badge">
+                        {% if course.price == 0 %}Free{% else %}₹{{ course.price }}{% endif %}
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="card-body d-flex flex-column p-4">
+                    <h5 class="card-title fw-bold mb-1" style="color:var(--bakery-primary);">{{ course.title }}</h5>
+                    {% if course.created_by %}
+                    <p class="text-muted small mb-2">
+                        <i class="fa-solid fa-user-tie me-1"></i>
+                        By {{ course.created_by.get_full_name|default:course.created_by.username }}
+                    </p>
+                    {% endif %}
+                    <p class="card-text text-muted small flex-grow-1">{{ course.description|truncatewords:22 }}</p>
+
+                    <!-- Action button — depends on enrollment status -->
+                    <div class="d-flex gap-2 mt-3 flex-wrap">
+
+                        {% if enrollment %}
+                            {% if enrollment.is_approved %}
+                                {# Approved → show Watch Course #}
+                                {% if course.video_url %}
+                                <a href="{{ course.video_url }}" target="_blank" rel="noopener noreferrer"
+                                   class="btn btn-watch rounded-pill flex-grow-1">
+                                    {% if course.is_youtube %}
+                                        <i class="fa-brands fa-youtube me-1"></i>
+                                    {% else %}
+                                        <i class="fa-solid fa-play me-1"></i>
+                                    {% endif %}
+                                    Watch Course
+                                </a>
+                                {% else %}
+                                <span class="btn btn-approved rounded-pill flex-grow-1 disabled">
+                                    <i class="fa-solid fa-circle-check me-1"></i> Enrolled
+                                </span>
+                                {% endif %}
+
+                            {% elif enrollment.is_pending %}
+                                {# Pending → show waiting badge #}
+                                <span class="btn btn-pending rounded-pill flex-grow-1 disabled">
+                                    <i class="fa-solid fa-clock me-1"></i> Pending Verification
+                                </span>
+
+                            {% elif enrollment.is_rejected %}
+                                {# Rejected → allow re-upload #}
+                                <a href="{% url 'course_payment' course.pk %}"
+                                   class="btn btn-rejected rounded-pill flex-grow-1">
+                                    <i class="fa-solid fa-rotate-right me-1"></i> Re-upload Receipt
+                                </a>
+                            {% endif %}
+
+                        {% else %}
+                            {# Not enrolled yet #}
+                            <a href="{% url 'enroll' course.pk %}"
+                               class="btn btn-enroll rounded-pill flex-grow-1">
+                                <i class="fa-solid fa-pen-to-square me-1"></i> Enroll Now
+                            </a>
+                        {% endif %}
+
+                        <a href="{% url 'course_detail' course.pk %}"
+                           class="btn btn-outline-secondary rounded-pill px-3" title="View details">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="text-center py-5 my-4">
+        <div class="mb-3" style="font-size:4rem;">🎂</div>
+        <h4 class="fw-bold" style="color:var(--bakery-primary);">No courses yet</h4>
+        <p class="text-muted">Check back soon — new masterclasses are being prepared!</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+.course-card { transition: transform .25s ease, box-shadow .25s ease; }
+.course-card:hover { transform: translateY(-6px); box-shadow: 0 16px 32px rgba(139,90,43,.12) !important; }
+.course-img-wrapper { position:relative; height:200px; background:#f5ede0; }
+.course-img { width:100%; height:100%; object-fit:cover; display:block; }
+.course-img-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#fff3e0,#ffe0b2); font-size:3.5rem; }
+.course-price-badge { position:absolute; top:12px; right:12px; background:var(--bakery-primary); color:#fff; font-size:.78rem; font-weight:700; padding:3px 10px; border-radius:20px; }
+.btn-watch  { background:#ff0000; color:#fff; font-weight:600; font-size:.85rem; border:none; transition:background .2s; }
+.btn-watch:hover { background:#cc0000; color:#fff; }
+.btn-enroll { background:var(--bakery-accent); color:#fff; font-weight:600; font-size:.85rem; border:none; transition:background .2s; }
+.btn-enroll:hover { background:var(--bakery-primary); color:#fff; }
+.btn-pending  { background:#fff3cd; color:#856404; font-weight:600; font-size:.85rem; border:1px solid #ffc107; cursor:default; opacity:1; }
+.btn-approved { background:#d1e7dd; color:#0a3622; font-weight:600; font-size:.85rem; border:none; cursor:default; opacity:1; }
+.btn-rejected { background:#f8d7da; color:#842029; font-weight:600; font-size:.85rem; border:1px solid #f5c2c7; transition:background .2s; }
+.btn-rejected:hover { background:#842029; color:#fff; }
+</style>
 {% endblock %}

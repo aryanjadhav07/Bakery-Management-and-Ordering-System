@@ -1,13 +1,155 @@
 {% extends 'base.html' %}
 
-{% block title %}Your Enrolled Courses{% endblock %}
+{% block title %}My Enrollments | Bakery Delight{% endblock %}
 
 {% block content %}
-    <h1>Your Enrolled Courses</h1>
-    {% for enrollment in enrollments %}
-        <div class="card">
-            <h3>{{ enrollment.course.title }}</h3>
-            <p>{{ enrollment.course.description }}</p>
+<div class="mt-2 mb-5">
+
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold mb-1" style="color:var(--bakery-primary);">
+                <i class="fa-solid fa-list-check me-2"></i>My Course Enrollments
+            </h2>
+            <p class="text-muted mb-0">Track your payment status and access approved courses.</p>
         </div>
-    {% endfor %}
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a href="{% url 'courses' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="fa-solid fa-graduation-cap me-1"></i> Browse Courses
+            </a>
+        </div>
+    </div>
+
+    {% if enrollments %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for enrollment in enrollments %}
+        {% with course=enrollment.course %}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 course-card">
+
+                <!-- Cover Image -->
+                <div class="course-img-wrapper rounded-top-4 overflow-hidden">
+                    {% if course.image %}
+                        <img src="{{ course.image }}" alt="{{ course.title }}" class="course-img"
+                             onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=600&q=80';">
+                    {% else %}
+                        <div class="course-img-placeholder"><span>🎂</span></div>
+                    {% endif %}
+
+                    <!-- Status badge on image -->
+                    {% if enrollment.is_approved %}
+                        <div class="status-badge badge-approved">
+                            <i class="fa-solid fa-circle-check me-1"></i>Approved
+                        </div>
+                    {% elif enrollment.is_pending %}
+                        <div class="status-badge badge-pending">
+                            <i class="fa-solid fa-clock me-1"></i>Pending
+                        </div>
+                    {% elif enrollment.is_rejected %}
+                        <div class="status-badge badge-rejected">
+                            <i class="fa-solid fa-circle-xmark me-1"></i>Rejected
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-body d-flex flex-column p-4">
+                    <h5 class="card-title fw-bold mb-1" style="color:var(--bakery-primary);">{{ course.title }}</h5>
+                    {% if course.created_by %}
+                    <p class="text-muted small mb-1">
+                        <i class="fa-solid fa-user-tie me-1"></i>
+                        By {{ course.created_by.get_full_name|default:course.created_by.username }}
+                    </p>
+                    {% endif %}
+                    <p class="text-muted small mb-1">
+                        <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                        Fee: <strong>{% if enrollment.amount == 0 %}Free{% else %}₹{{ enrollment.amount }}{% endif %}</strong>
+                    </p>
+                    <p class="text-muted small mb-3">
+                        <i class="fa-solid fa-calendar me-1"></i>
+                        Applied: {{ enrollment.created_at|date:"d M Y" }}
+                    </p>
+
+                    <!-- Rejection note -->
+                    {% if enrollment.is_rejected and enrollment.rejection_note %}
+                    <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+                        <i class="fa-solid fa-circle-xmark me-1"></i>
+                        {{ enrollment.rejection_note }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Action buttons -->
+                    <div class="d-flex gap-2 mt-auto flex-wrap">
+                        {% if enrollment.is_approved %}
+                            {% if course.video_url %}
+                            <a href="{{ course.video_url }}" target="_blank" rel="noopener noreferrer"
+                               class="btn btn-watch rounded-pill flex-grow-1">
+                                {% if course.is_youtube %}
+                                    <i class="fa-brands fa-youtube me-1"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-play me-1"></i>
+                                {% endif %}
+                                Watch Course
+                            </a>
+                            {% else %}
+                            <span class="btn btn-approved-btn rounded-pill flex-grow-1 disabled">
+                                <i class="fa-solid fa-circle-check me-1"></i> Enrolled
+                            </span>
+                            {% endif %}
+
+                        {% elif enrollment.is_pending %}
+                            <span class="btn btn-pending-btn rounded-pill flex-grow-1 disabled">
+                                <i class="fa-solid fa-clock me-1"></i> Awaiting Verification
+                            </span>
+
+                        {% elif enrollment.is_rejected %}
+                            <a href="{% url 'course_payment' course.pk %}"
+                               class="btn btn-rejected-btn rounded-pill flex-grow-1">
+                                <i class="fa-solid fa-rotate-right me-1"></i> Re-upload Receipt
+                            </a>
+                        {% endif %}
+
+                        <a href="{% url 'course_detail' course.pk %}"
+                           class="btn btn-outline-secondary rounded-pill px-3" title="Details">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="text-center py-5 my-4">
+        <div class="mb-3" style="font-size:4rem;">📚</div>
+        <h4 class="fw-bold" style="color:var(--bakery-primary);">No enrollments yet</h4>
+        <p class="text-muted mb-4">Browse our courses and register for a masterclass!</p>
+        <a href="{% url 'courses' %}" class="btn btn-enroll rounded-pill px-5">
+            <i class="fa-solid fa-graduation-cap me-2"></i>Browse Courses
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+.course-card { transition: transform .25s ease, box-shadow .25s ease; }
+.course-card:hover { transform: translateY(-6px); box-shadow: 0 16px 32px rgba(139,90,43,.12) !important; }
+.course-img-wrapper { position:relative; height:200px; background:#f5ede0; }
+.course-img { width:100%; height:100%; object-fit:cover; display:block; }
+.course-img-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#fff3e0,#ffe0b2); font-size:3.5rem; }
+.status-badge { position:absolute; top:12px; right:12px; font-size:.75rem; font-weight:700; padding:3px 10px; border-radius:20px; }
+.badge-approved { background:#198754; color:#fff; }
+.badge-pending  { background:#ffc107; color:#000; }
+.badge-rejected { background:#dc3545; color:#fff; }
+.btn-watch { background:#ff0000; color:#fff; font-weight:600; font-size:.85rem; border:none; transition:background .2s; }
+.btn-watch:hover { background:#cc0000; color:#fff; }
+.btn-enroll { background:var(--bakery-accent); color:#fff; font-weight:600; border:none; transition:background .2s; }
+.btn-enroll:hover { background:var(--bakery-primary); color:#fff; }
+.btn-pending-btn  { background:#fff3cd; color:#856404; font-weight:600; font-size:.85rem; border:1px solid #ffc107; cursor:default; opacity:1; }
+.btn-approved-btn { background:#d1e7dd; color:#0a3622; font-weight:600; font-size:.85rem; border:none; cursor:default; opacity:1; }
+.btn-rejected-btn { background:#f8d7da; color:#842029; font-weight:600; font-size:.85rem; border:1px solid #f5c2c7; transition:background .2s; }
+.btn-rejected-btn:hover { background:#842029; color:#fff; }
+</style>
 {% endblock %}

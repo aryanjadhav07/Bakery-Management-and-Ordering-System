@@ -68,7 +68,7 @@ def logout_view(request):
     return redirect('home')
 
 from orders.models import Order
-from courses.models import Enrollment
+from courses.models import Enrollment, Course, CourseEnrollment
 
 @customer_required
 def dashboard(request):
@@ -76,7 +76,10 @@ def dashboard(request):
     context = {
         'total_orders': user_orders.count(),
         'completed_orders': user_orders.filter(status='Completed').count(),
-        'active_courses': Enrollment.objects.filter(user=request.user).count(),
+        'active_courses': CourseEnrollment.objects.filter(
+            user=request.user,
+            payment_status=CourseEnrollment.STATUS_APPROVED
+        ).count(),
         'recent_orders': user_orders.order_by('-created_at')[:3]
     }
     return render(request, 'dashboard.html', context)
@@ -84,13 +87,10 @@ def dashboard(request):
 @baker_required
 def baker_dashboard(request):
     from chat.models import ChatMessage
-    
-    # DEBUG Prints required by user constraints
-    print("Logged in user:", request.user)
-    print("Orders count:", Order.objects.filter(baker=request.user).count())
-    
+    from courses.models import CourseEnrollment
+
     unread_messages_count = ChatMessage.objects.filter(receiver=request.user, is_read=False).count()
-    
+
     all_msgs = ChatMessage.objects.filter(receiver=request.user).select_related('sender').order_by('-timestamp')
     recent_messages = []
     seen_senders = set()
@@ -100,13 +100,16 @@ def baker_dashboard(request):
             seen_senders.add(msg.sender)
             if len(recent_messages) >= 5:
                 break
-                
+
     context = {
         'total_orders': Order.objects.filter(baker=request.user).count(),
         'pending_orders': Order.objects.filter(baker=request.user, status='Pending').count(),
         'total_courses': Course.objects.filter(created_by=request.user).count(),
         'unread_messages_count': unread_messages_count,
         'recent_messages': recent_messages,
+        'pending_course_payments': CourseEnrollment.objects.filter(
+            payment_status=CourseEnrollment.STATUS_PENDING
+        ).count(),
     }
     return render(request, 'users/baker_dashboard.html', context)
 

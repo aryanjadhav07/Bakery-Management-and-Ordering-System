@@ -64,6 +64,22 @@
                 </div>
             </div>
         </div>
+        <!-- Course Payments -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border border-light h-100 rounded-4 transition-hover">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <i class="bi bi-receipt display-4 mb-3 text-warning"></i>
+                    <h5 class="card-title fw-bold" style="color: var(--bakery-accent);">
+                        Course Payments
+                        {% if pending_course_payments > 0 %}
+                        <span class="badge bg-danger rounded-pill ms-1">{{ pending_course_payments }}</span>
+                        {% endif %}
+                    </h5>
+                    <p class="card-text text-muted small flex-grow-1">Review student payment receipts and approve or reject course enrollments.</p>
+                    <a href="{% url 'manage_course_payments' %}" class="btn btn-outline-warning mt-auto rounded-pill px-4">Review Payments</a>
+                </div>
+            </div>
+        </div>
         <!-- Chat Interactions -->
         <div class="col-md-4">
             <div class="card shadow-sm border border-light h-100 rounded-4 transition-hover">

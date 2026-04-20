@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Course Payment | {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="mt-2 mb-5">
+
+    <!-- Back -->
+    <a href="{% url 'courses' %}" class="text-decoration-none text-muted small mb-3 d-inline-block">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Courses
+    </a>
+
+    <div class="row g-4 mt-1 justify-content-center">
+
+        <!-- Left: Course summary -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <!-- Cover image -->
+                <div style="height:200px; background:#f5ede0; overflow:hidden;">
+                    {% if course.image %}
+                        <img src="{{ course.image }}" alt="{{ course.title }}"
+                             style="width:100%;height:100%;object-fit:cover;"
+                             onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=600&q=80';">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center h-100" style="font-size:4rem;">🎂</div>
+                    {% endif %}
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-1" style="color:var(--bakery-primary);">{{ course.title }}</h5>
+                    {% if course.created_by %}
+                    <p class="text-muted small mb-3">
+                        <i class="fa-solid fa-user-tie me-1"></i>
+                        {{ course.created_by.get_full_name|default:course.created_by.username }}
+                    </p>
+                    {% endif %}
+                    <p class="text-muted small mb-3">{{ course.description|truncatewords:30 }}</p>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted fw-bold">Enrollment Fee</span>
+                        <span class="fs-4 fw-bold" style="color:var(--bakery-accent);">
+                            {% if course.price == 0 %}Free{% else %}₹{{ course.price }}{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Payment instructions + receipt upload -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+
+                <h4 class="fw-bold mb-1" style="color:var(--bakery-primary);">
+                    <i class="fa-solid fa-indian-rupee-sign me-2"></i>Complete Payment
+                </h4>
+                <p class="text-muted small mb-4">
+                    Pay the enrollment fee and upload your payment receipt for baker verification.
+                </p>
+
+                <!-- Status banner if already submitted -->
+                {% if enrollment.receipt_image and enrollment.is_pending %}
+                <div class="alert alert-warning d-flex align-items-center gap-2 rounded-3 mb-4">
+                    <i class="fa-solid fa-clock-rotate-left fa-lg"></i>
+                    <div>
+                        <strong>Receipt already submitted.</strong><br>
+                        <small>Your payment is pending baker verification. You can re-upload if needed.</small>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if enrollment.is_rejected %}
+                <div class="alert alert-danger d-flex align-items-center gap-2 rounded-3 mb-4">
+                    <i class="fa-solid fa-circle-xmark fa-lg"></i>
+                    <div>
+                        <strong>Payment Rejected.</strong><br>
+                        <small>{{ enrollment.rejection_note }}</small><br>
+                        <small class="text-muted">Please re-upload a valid receipt below.</small>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Payment Instructions -->
+                <div class="p-3 rounded-3 mb-4" style="background:#fff9f0; border:1px solid #f1c27d;">
+                    <h6 class="fw-bold mb-3" style="color:var(--bakery-primary);">
+                        <i class="fa-solid fa-circle-info me-1"></i> Payment Instructions
+                    </h6>
+                    <div class="row g-3 align-items-center">
+
+                        <!-- QR Code -->
+                        <div class="col-sm-4 text-center">
+                            <div class="qr-wrapper d-inline-block p-2 rounded-3 border bg-white shadow-sm">
+                                <img src="{% static 'images/upi_qr.png' %}"
+                                     alt="UPI QR Code"
+                                     style="width:130px; height:130px; display:block;">
+                            </div>
+                            <div class="mt-2" style="font-size:.72rem; color:#888;">
+                                Scan with any UPI app
+                            </div>
+                        </div>
+
+                        <!-- UPI details -->
+                        <div class="col-sm-8">
+                            <div class="d-flex align-items-start gap-2 mb-3">
+                                <i class="fa-solid fa-mobile-screen-button mt-1" style="color:var(--bakery-accent);"></i>
+                                <div>
+                                    <div class="fw-bold small">UPI ID</div>
+                                    <div class="text-muted small user-select-all">kavitalilake@upi</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start gap-2 mb-3">
+                                <i class="fa-solid fa-phone mt-1" style="color:var(--bakery-accent);"></i>
+                                <div>
+                                    <div class="fw-bold small">GPay / PhonePe / Paytm</div>
+                                    <div class="text-muted small">+91 93708 96978</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="fa-solid fa-circle-exclamation mt-1 text-warning"></i>
+                                <small class="text-muted">
+                                    After payment, take a screenshot of the confirmation
+                                    and upload it below. Baker will verify within 24 hours.
+                                </small>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Receipt Upload Form -->
+                <form method="POST" enctype="multipart/form-data" class="submit-with-loading">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">
+                            <i class="fa-solid fa-image me-1"></i>Upload Payment Receipt
+                        </label>
+                        <input type="file" name="receipt_image" accept="image/*"
+                               class="form-control" required
+                               id="receiptInput" onchange="previewReceipt(this)">
+                        <div class="form-text">Accepted: JPG, PNG, WEBP. Max 5MB.</div>
+                    </div>
+
+                    <!-- Image preview -->
+                    <div id="receiptPreview" class="mb-3 d-none">
+                        <img id="previewImg" src="" alt="Receipt preview"
+                             class="rounded-3 border shadow-sm"
+                             style="max-height:180px; max-width:100%; object-fit:contain;">
+                    </div>
+
+                    <button type="submit" class="btn w-100 rounded-pill fw-bold py-2 btn-submit-payment">
+                        <i class="fa-solid fa-paper-plane me-2"></i>Submit Receipt for Verification
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn-submit-payment {
+    background: var(--bakery-primary);
+    color: #fff;
+    border: none;
+    transition: background 0.2s ease;
+}
+.btn-submit-payment:hover { background: var(--bakery-accent); color: #fff; }
+</style>
+
+{% block scripts %}
+<script>
+function previewReceipt(input) {
+    const preview = document.getElementById('receiptPreview');
+    const img     = document.getElementById('previewImg');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            img.src = e.target.result;
+            preview.classList.remove('d-none');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+{% endblock %}
+{% endblock %}
