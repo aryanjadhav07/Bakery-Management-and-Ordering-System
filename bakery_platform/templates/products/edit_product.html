@@ -73,10 +73,22 @@
                                 <div class="text-danger small mt-1">{{ form.price_2kg.errors }}</div>
                                 {% endif %}
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Image Upload
-                                    (Optional)</label>
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">
+                                    Image Upload (Optional)
+                                </label>
+                                {% if product.image %}
+                                <div class="mb-2 d-flex align-items-center gap-3">
+                                    <img src="{{ product.image.url }}"
+                                         alt="Current image"
+                                         class="rounded-3 border shadow-sm"
+                                         style="height:80px;width:80px;object-fit:cover;"
+                                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=150&q=80';">
+                                    <small class="text-muted">Current image — upload a new one to replace it.</small>
+                                </div>
+                                {% endif %}
                                 {{ form.image }}
+                                <div class="form-text">Accepted: JPG, PNG, WEBP. Leave blank to keep current image.</div>
                                 {% if form.image.errors %}
                                 <div class="text-danger small mt-1">{{ form.image.errors }}</div>
                                 {% endif %}

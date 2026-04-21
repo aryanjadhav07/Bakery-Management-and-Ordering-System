@@ -1,16 +1,85 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ product.name }}{% endblock %}
+{% block title %}{{ product.name }} | Bakery Delight{% endblock %}
 
 {% block content %}
-    <h1>{{ product.name }}</h1>
-    <p>{{ product.description }}</p>
-    <p>Price: ${{ product.price }}</p>
-    <form action="{% url 'add_to_order' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="product_id" value="{{ product.id }}">
-        <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantity" value="1">
-        <button type="submit">Add to Order</button>
-    </form>
+<div class="mt-2 mb-5">
+
+    <a href="{% url 'products' %}" class="text-decoration-none text-muted small mb-3 d-inline-block">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Products
+    </a>
+
+    <div class="row g-4 mt-1">
+
+        <!-- Product Image -->
+        <div class="col-lg-5">
+            <div class="rounded-4 overflow-hidden shadow-sm" style="height:340px; background:#f5ede0;">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}"
+                         alt="{{ product.name }}"
+                         style="width:100%;height:100%;object-fit:cover;"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&q=80';">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&q=80"
+                         alt="{{ product.name }}"
+                         style="width:100%;height:100%;object-fit:cover;">
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-lg-7">
+            <div class="ps-lg-2">
+                <h2 class="fw-bold mb-2" style="color:var(--bakery-primary);">{{ product.name }}</h2>
+                <p class="text-muted lh-lg mb-4">{{ product.description }}</p>
+
+                <!-- Size & Price -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-muted">Select Size</label>
+                    <select id="sizeSelect" class="form-select w-auto">
+                        {% if product.price_half_kg %}
+                        <option value="half" data-price="{{ product.price_half_kg }}">0.5 KG — ₹{{ product.price_half_kg }}</option>
+                        {% endif %}
+                        {% if product.price_1kg %}
+                        <option value="1kg" data-price="{{ product.price_1kg }}" selected>1 KG — ₹{{ product.price_1kg }}</option>
+                        {% endif %}
+                        {% if product.price_2kg %}
+                        <option value="2kg" data-price="{{ product.price_2kg }}">2 KG — ₹{{ product.price_2kg }}</option>
+                        {% endif %}
+                        {% if not product.price_half_kg and not product.price_1kg and not product.price_2kg %}
+                        <option value="1kg" data-price="{{ product.price }}" selected>Standard — ₹{{ product.price }}</option>
+                        {% endif %}
+                    </select>
+                    <div class="mt-2 fs-4 fw-bold" style="color:var(--bakery-accent);">
+                        ₹<span id="detailPrice">{% if product.price_1kg %}{{ product.price_1kg }}{% else %}{{ product.price }}{% endif %}</span>
+                    </div>
+                </div>
+
+                <!-- Add to Cart -->
+                <form action="{% url 'add_to_cart' product.id %}" method="POST" class="d-flex gap-3 align-items-center flex-wrap">
+                    {% csrf_token %}
+                    <input type="hidden" name="size" id="detailSizeInput" value="1kg">
+                    <div class="input-group" style="width:130px;">
+                        <span class="input-group-text">Qty</span>
+                        <input type="number" name="quantity" class="form-control text-center" value="1" min="1" max="10">
+                    </div>
+                    <button type="submit" class="btn rounded-pill px-4 fw-bold"
+                            style="background:var(--bakery-accent);color:#fff;border:none;">
+                        <i class="fa-solid fa-cart-plus me-2"></i>Add to Cart
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+document.getElementById('sizeSelect').addEventListener('change', function() {
+    const opt = this.options[this.selectedIndex];
+    document.getElementById('detailPrice').textContent = opt.getAttribute('data-price');
+    document.getElementById('detailSizeInput').value = opt.value;
+});
+</script>
+{% endblock %}
 {% endblock %}
