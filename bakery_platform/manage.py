@@ -9,29 +9,12 @@ def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bakery_platform.settings')
     try:
         from django.core.management import execute_from_command_line
-        import django
-
-        django.setup()  # ✅ VERY IMPORTANT
-
-        # ✅ NOW SAFE TO USE MODELS
-        from django.contrib.auth import get_user_model
-
-        User = get_user_model()
-
-        try:
-            user = User.objects.get(username="KAVITA")
-            user.is_staff = True
-            user.is_superuser = True
-            user.save()
-            print("KAVITA is now admin!")
-        except User.DoesNotExist:
-            print("User KAVITA not found")
-
     except ImportError as exc:
         raise ImportError(
-            "Couldn't import Django. Are you sure it's installed?"
+            "Couldn't import Django. Are you sure it's installed and "
+            "available on your PYTHONPATH environment variable? Did you "
+            "forget to activate a virtual environment?"
         ) from exc
-
     execute_from_command_line(sys.argv)
 
 
