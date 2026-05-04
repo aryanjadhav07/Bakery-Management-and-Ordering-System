@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from .models import *
 
 # ✅ Register default Django User safely
-admin.site.register(User)
+
 
 # ✅ Register all your models
 admin.site.register(UserProfile)
