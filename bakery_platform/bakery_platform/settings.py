@@ -20,7 +20,9 @@ SECRET_KEY = os.environ.get(
 )
 
 # DEBUG is True locally, False in production (set DEBUG=False in Render env vars)
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = True
+ALLOWED_HOSTS = ['*']
+
 
 # ALLOWED_HOSTS: comma-separated list in env var, e.g. "yourdomain.onrender.com,localhost"
 _raw_hosts = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1')
